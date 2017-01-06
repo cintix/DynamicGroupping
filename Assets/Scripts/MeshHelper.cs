@@ -36,8 +36,7 @@ public static class MeshHelper
 	}
 
 	#region Subdivide4 (2x2)
-	static int GetNewVertex4(int i1, int i2)
-	{
+	static int GetNewVertex4(int i1, int i2) {
 		int newIndex = vertices.Count;
 		uint t1 = ((uint)i1 << 16) | (uint)i2;
 		uint t2 = ((uint)i2 << 16) | (uint)i1;
@@ -64,14 +63,8 @@ public static class MeshHelper
 	}
 
 
-	/// <summary>
-	/// Devides each triangles into 4. A quad(2 tris) will be splitted into 2x2 quads( 8 tris )
-	/// </summary>
-	/// <param name="mesh"></param>
-	public static void Subdivide4(Mesh mesh)
-	{
+	public static void Subdivide4(Mesh mesh) {
 		newVectices = new Dictionary<uint,int>();
-
 		InitArrays(mesh);
 
 		int[] triangles = mesh.triangles;
@@ -108,31 +101,23 @@ public static class MeshHelper
 	#endregion Subdivide4 (2x2)
 
 	#region Subdivide9 (3x3)
-	static int GetNewVertex9(int i1, int i2, int i3)
-	{
+	static int GetNewVertex9(int i1, int i2, int i3) {
 		int newIndex = vertices.Count;
 
 		// center points don't go into the edge list
-		if (i3 == i1 || i3 == i2)
-		{
+		if (i3 == i1 || i3 == i2) {
 			uint t1 = ((uint)i1 << 16) | (uint)i2;
-			if (newVectices.ContainsKey(t1))
-				return newVectices[t1];
+			if (newVectices.ContainsKey(t1)) return newVectices[t1];
 			newVectices.Add(t1,newIndex);
 		}
 
 		// calculate new vertex
 		vertices.Add((vertices[i1] + vertices[i2] + vertices[i3]) / 3.0f);
-		if (normals.Count>0)
-			normals.Add((normals[i1] + normals[i2] + normals [i3]).normalized);
-		if (colors.Count>0)
-			colors.Add((colors[i1] + colors[i2] + colors[i3]) / 3.0f);
-		if (uv.Count>0)
-			uv.Add((uv[i1] + uv[i2] + uv[i3]) / 3.0f);
-		if (uv1.Count>0)
-			uv1.Add((uv1[i1] + uv1[i2] + uv1[i3]) / 3.0f);
-		if (uv2.Count>0)
-			uv2.Add((uv2[i1] + uv2[i2] + uv2[i3]) / 3.0f);
+		if (normals.Count>0) normals.Add((normals[i1] + normals[i2] + normals [i3]).normalized);
+		if (colors.Count>0) colors.Add((colors[i1] + colors[i2] + colors[i3]) / 3.0f);
+		if (uv.Count>0) uv.Add((uv[i1] + uv[i2] + uv[i3]) / 3.0f);
+		if (uv1.Count>0) uv1.Add((uv1[i1] + uv1[i2] + uv1[i3]) / 3.0f);
+		if (uv2.Count>0) uv2.Add((uv2[i1] + uv2[i2] + uv2[i3]) / 3.0f);
 		return newIndex;
 	}
 
@@ -141,15 +126,12 @@ public static class MeshHelper
 	/// Devides each triangles into 9. A quad(2 tris) will be splitted into 3x3 quads( 18 tris )
 	/// </summary>
 	/// <param name="mesh"></param>
-	public static void Subdivide9(Mesh mesh)
-	{
+	public static void Subdivide9(Mesh mesh) {
 		newVectices = new Dictionary<uint,int>();
-
 		InitArrays(mesh);
 
 		int[] triangles = mesh.triangles;
-		for (int i = 0; i < triangles.Length; i += 3)
-		{
+		for (int i = 0; i < triangles.Length; i += 3) {
 			int i1 = triangles[i + 0];
 			int i2 = triangles[i + 1];
 			int i3 = triangles[i + 2];
@@ -175,16 +157,11 @@ public static class MeshHelper
 		}
 
 		mesh.vertices = vertices.ToArray();
-		if (normals.Count > 0)
-			mesh.normals = normals.ToArray();
-		if (colors.Count>0)
-			mesh.colors = colors.ToArray();
-		if (uv.Count>0)
-			mesh.uv = uv.ToArray();
-		if (uv1.Count>0)
-			mesh.uv2 = uv1.ToArray();
-		if (uv2.Count>0)
-			mesh.uv2 = uv2.ToArray();
+		if (normals.Count>0) mesh.normals = normals.ToArray();
+		if (colors.Count>0) mesh.colors = colors.ToArray();
+		if (uv.Count>0) mesh.uv = uv.ToArray();
+		if (uv1.Count>0) mesh.uv2 = uv1.ToArray();
+		if (uv2.Count>0) mesh.uv2 = uv2.ToArray();
 
 		mesh.triangles = indices.ToArray();
 
@@ -194,38 +171,23 @@ public static class MeshHelper
 
 
 	#region Subdivide
-	/// <summary>
-	/// This functions subdivides the mesh based on the level parameter
-	/// Note that only the 4 and 9 subdivides are supported so only those divides
-	/// are possible. [2,3,4,6,8,9,12,16,18,24,27,32,36,48,64, ...]
-	/// The function tried to approximate the desired level 
-	/// </summary>
-	/// <param name="mesh"></param>
-	/// <param name="level">Should be a number made up of (2^x * 3^y)
-	/// [2,3,4,6,8,9,12,16,18,24,27,32,36,48,64, ...]
-	/// </param>
-	public static void Subdivide(Mesh mesh, int level)
-	{
-		if (level < 2)
-			return;
-		while (level > 1)
-		{
+
+	public static void Subdivide(Mesh mesh, int level) {
+		if (level < 2) return;
+		while (level > 1) {
 			// remove prime factor 3
-			while (level % 3 == 0)
-			{
+			while (level % 3 == 0) {
 				Subdivide9(mesh);
 				level /= 3;
 			}
 			// remove prime factor 2
-			while (level % 2 == 0)
-			{
+			while (level % 2 == 0) {
 				Subdivide4(mesh);
 				level /= 2;
 			}
 			// try to approximate. All other primes are increased by one
 			// so they can be processed
-			if (level > 3)
-				level++; 
+			if (level > 3) level++;
 		}
 	}
 	#endregion Subdivide
@@ -269,9 +231,8 @@ public static class MeshHelper
 		triangleList.Add(0);
 		triangleList.Add(1);
 		triangleList.Add(2);
-		for (int i = 0; i < numOfPoints - 1; i++)
-		{
-			triangleList.Add(0);                      // Index of circle center.
+		for (int i = 0; i < numOfPoints - 1; i++) {
+			triangleList.Add(0);       
 			triangleList.Add(vertexList.Count - 1);
 			triangleList.Add(vertexList.Count);
 			vertexList.Add(quaternion * vertexList[vertexList.Count - 1]);

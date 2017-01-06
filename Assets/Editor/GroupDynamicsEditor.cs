@@ -6,34 +6,14 @@ using UnityEditor;
 [CanEditMultipleObjects]
 public class GroupDynamicsEditor : Editor {
 
-//	public int modelSelectionIndex = 0;
-//	public GUIContent[] modelSelectedList = new GUIContent[4]; 
-	SerializedProperty modelProp;
-	// Stops showing the script field
-
-
-	void OnEnable () {
-		
-		// Setup the SerializedProperties
-
-/*		modelSelectedList[0] = new GUIContent("   Square", EditorGUIUtility.ObjectContent(null,typeof(BoxCollider)).image );
-		modelSelectedList[1] = new GUIContent("   Triangle", EditorGUIUtility.ObjectContent(null,typeof(Rigidbody)).image);
-		modelSelectedList[2] = new GUIContent("   Circle", EditorGUIUtility.ObjectContent(null,typeof(CircleCollider2D)).image);
-		modelSelectedList[3] = new GUIContent("   Rectangel", EditorGUIUtility.ObjectContent(null,typeof(BoxCollider2D)).image);
-*/
-	}
-
 	public override void OnInspectorGUI() {
 
 		GroupDynamics script = (GroupDynamics) target;
 		this.DrawDefaultInspectorWithoutScriptField () ;
 
 		EditorGUILayout.Space();
-
-
-
-
 		EditorGUILayout.LabelField("Dynamics Model Options", EditorStyles.boldLabel);
+
 		if (script.dynamicModel == GroupDynamics.GroupModel.Circle) {
 			var currentStyle = EditorStyles.label.fontStyle;
 			EditorStyles.label.fontStyle = FontStyle.Normal;
@@ -75,8 +55,6 @@ public class GroupDynamicsEditor : Editor {
 			script.grouppingMode = (GroupDynamics.GrouppingMode) EditorGUILayout.EnumPopup(new GUIContent("Follow Group Mode"), script.grouppingMode);
 		}
 
-
-
 		if (script.height < 0) script.height = 0;
 		if (script.width < 0) script.width = 0;
 
@@ -88,15 +66,11 @@ public class GroupDynamicsEditor : Editor {
 		SceneView.RepaintAll();
 
 	}
-
-
-
-
 }
-public static class GroupDynamicsEditor_EditorExtension
-{
-	public static bool DrawDefaultInspectorWithoutScriptField ( this Editor Inspector )
-	{
+
+public static class GroupDynamicsEditor_EditorExtension {
+	
+	public static bool DrawDefaultInspectorWithoutScriptField ( this Editor Inspector ) {
 		EditorGUI.BeginChangeCheck() ;
 		Inspector.serializedObject.Update() ;
 
